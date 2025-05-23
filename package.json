@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "fs": "^0.0.1-security",
+    "http": "^0.0.1-security",
+    "jquery": "^3.7.1",
+    "jQuery": "^1.7.4",
+    "lastfm": "^0.9.4",
+    "lastfm-node-client": "^2.2.0",
+    "node-fetch": "^2.7.0",
+    "path": "^0.12.7",
+    "revolt.js": "^7.2.0"
+  }
+}

@@ -1,0 +1,6 @@
+{
+    "token": "TOKEN_HERE",
+    "prefix": "!",
+    "lastfmApiKey": "API_KEY_HERE",
+    "cooldownSeconds": 0
+}
