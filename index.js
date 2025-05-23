@@ -33,7 +33,12 @@ client.on("messageCreate", async (msg) => {
     const timeElapsed = now - cooldowns.get(key);
     if (timeElapsed < cooldownTime) {
       const timeLeft = ((cooldownTime - timeElapsed) / 1000).toFixed(1);
-      return msg.reply(`⏳ You're on cooldown! Try again in ${timeLeft}s.`);
+      try {
+        await msg.reply(`⏳ You're on cooldown! Try again in ${timeLeft}s.`);
+      } catch {
+        // Prevents crashes when the bot can't send messages due to missing permissions
+      }
+      return;
     }
   }
 
@@ -44,7 +49,11 @@ client.on("messageCreate", async (msg) => {
     await command.execute(msg, args, client);
   } catch (err) {
     console.error(`❌ Error running command "${cmdName}":`, err);
-    msg.reply("❌ An error occurred while executing the command.");
+    try {
+      await msg.reply("❌ An error occurred while executing the command.");
+    } catch {
+        // Prevents crashes when the bot can't send messages due to missing permissions
+    }
   }
 });
 
