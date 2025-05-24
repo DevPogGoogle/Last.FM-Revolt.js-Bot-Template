@@ -1,19 +1,20 @@
-// Import the "Client" class from the revolt.js package
 const { Client } = require("revolt.js");
-// Import the values of "token" and "prefix" declared in your config.json file
+
 const config = require("./config.json");
-// Loads some of the commands here
-const registerCommands = require("./utils/loader.js/loader.js")
-// Help me pls it's 1:11AM
+
+const registerCommands = require("./utils/loader.js");
+
 const client = new Client();
 const cooldowns = new Map();
-// Imports some of the commands (I think LMFAO fuck this shit)
-const commands = registerCommands("./commands")
+
+const commands = registerCommands("./commands");
 client.commands = commands;
 
-client.on ("ready", async () => {
-    console.info ('Welcome back Scrobbled');
-    client.api.patch("/users/@me", { status: { text: "wat dis?", presence: "Focus" } });
+client.on("ready", async () => {
+  console.info("✅ Logged in as Scrobbled.");
+  await client.api.patch("/users/@me", {
+    status: { text: "wat dis?", presence: "Focus" },
+  });
 });
 
 client.on("messageCreate", async (msg) => {
@@ -30,13 +31,13 @@ client.on("messageCreate", async (msg) => {
   const cooldownTime = (config.cooldownSeconds || 3) * 1000;
 
   if (cooldowns.has(key)) {
-    const timeElapsed = now - cooldowns.get(key);
-    if (timeElapsed < cooldownTime) {
-      const timeLeft = ((cooldownTime - timeElapsed) / 1000).toFixed(1);
+    const elapsed = now - cooldowns.get(key);
+    if (elapsed < cooldownTime) {
+      const timeLeft = ((cooldownTime - elapsed) / 1000).toFixed(1);
       try {
         await msg.reply(`⏳ You're on cooldown! Try again in ${timeLeft}s.`);
       } catch {
-        // Prevents crashes when the bot can't send messages due to missing permissions
+
       }
       return;
     }
@@ -52,7 +53,7 @@ client.on("messageCreate", async (msg) => {
     try {
       await msg.reply("❌ An error occurred while executing the command.");
     } catch {
-        // Prevents crashes when the bot can't send messages due to missing permissions
+
     }
   }
 });
