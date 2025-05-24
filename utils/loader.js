@@ -1,5 +1,3 @@
-//Special Thanks to Asraye for this code (I'm too stupid to code this I'll be honest.)
-
 const fs = require("fs");
 const path = require("path");
 

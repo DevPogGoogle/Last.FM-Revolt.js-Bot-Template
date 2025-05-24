@@ -1,13 +1,12 @@
 const config = require("../../config.json");
-const { description, category, execute } = require("../LastFm/recent");
 
 module.exports = {
-    name: "ping",
-    description: "Ping the bot",
-    category: "Utility",
+  name: "ping",
+  description: "Ping the bot",
+  category: "Utility",
 
-    execute: async (msg) => {
+  execute: async (msg) => {
     const ping = Date.now() - new Date(msg.createdAt).getTime();
-    await msg.reply(`🤖Beep boop! Bot ping: ${ping}ms`);
-    }
-}
+    await msg.reply(`🤖 Beep boop! Bot ping: \`${ping}ms\``);
+  }
+};

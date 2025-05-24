@@ -1,6 +1,6 @@
 {
-    "token": "TOKEN_HERE",
+    "token": "BOT-TOKEN",
     "prefix": "!",
-    "lastfmApiKey": "API_KEY_HERE",
-    "cooldownSeconds": 0
+    "lastfmApiKey": "FMAPIKEY",
+    "cooldownSeconds": 5
 }

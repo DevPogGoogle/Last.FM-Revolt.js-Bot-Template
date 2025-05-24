@@ -1,35 +1,67 @@
-//Special Thanks to Asraye for the help on this code (I'm too stupid to code this alone I'll be honest.)
-
+const fetch = require("node-fetch");
 const config = require("../../config.json");
+const { readUserData } = require("../../utils/userHandler");
 
+const validPeriods = ["overall", "7day", "1month", "3month", "6month", "12month"];
 
 module.exports = {
   name: "toptracks",
   aliases: ["tt"],
-  description: "Show your top tracks. (You need to define a username and timespan for this command to work. Timespan can be overall, 7day, 1month, 3month, 6month or 12month.)",
+  description: "Show your top tracks over a given timespan.",
   category: "LastFm",
+
   execute: async (msg, args) => {
-    const username = args[0];
-    if (!username) return msg.reply("❌ Please provide a Last.fm username.");
-        const timespan = args[1];
-    if (!timespan) return msg.reply("❌ Please provide a timespan. Can be overall, 7day, 1month, 3month, 6month or 12month.");
+    let username = args[0];
+    let period = args[1];
 
-    const lastfmApiKey = 'API_KEY' // hack type shi, LIKE WHY THE FUCK DOES IT WORK WHEN I PUT THE FUCKING API KEY HERE IN THIS FUCKING COMMAND????
+    const userData = readUserData();
 
+    if (!username || validPeriods.includes(username.toLowerCase())) {
+      const saved = userData[msg.author.id];
+      if (!saved || !saved.lastfm) {
+        return msg.reply("❌ Please provide a Last.fm username or set one using `setfm`.");
+      }
+      period = username || "overall";
+      username = saved.lastfm;
+    }
 
+    if (!period || !validPeriods.includes(period.toLowerCase())) {
+      return msg.reply(
+        "❌ Please provide a valid timespan.\nValid options: `overall`, `7day`, `1month`, `3month`, `6month`, `12month`."
+      );
+    }
 
-    const url = `http://ws.audioscrobbler.com/2.0/?method=user.getTopTracks&user=${username}&api_key=${lastfmApiKey}&period=${timespan}&limit=5&format=json`;
+    period = period.toLowerCase();
 
-    const res = await fetch(url);
-    const data = await res.json();
-    const artists = data.toptracks.track;
+    const apiKey = config.lastfmApiKey;
+    if (!apiKey) return msg.reply("❌ Missing Last.fm API key in `config.json`.");
 
-        if (!artists) return msg.reply("You haven't listened to any tracks yet, scrobble a song to get started!");
+    const url = `http://ws.audioscrobbler.com/2.0/?method=user.getTopTracks&user=${encodeURIComponent(
+      username
+    )}&api_key=${apiKey}&period=${period}&limit=5&format=json`;
 
-    const reply = artists
-      .map((t, i) => `> ${i + 1}. **${t.name}** by **${t.artist["name"]}** - ${t.playcount} plays`)
-      .join("\n");
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
 
-    msg.reply(`> 💽 **${username}'s top tracks:**\n${reply}`);
-  }
+      const tracks = data?.toptracks?.track;
+      if (!tracks || !tracks.length) {
+        return msg.reply(`❌ No top tracks found for **${username}** during **${period}**.`);
+      }
+
+      const formatted = tracks
+        .map((t, i) => {
+          const name = t.name || "Unknown Track";
+          const artist = t.artist?.name || "Unknown Artist";
+          const plays = t.playcount || "0";
+          return `> ${i + 1}. **${name}** by **${artist}** – ${plays} plays`;
+        })
+        .join("\n");
+
+      msg.reply(`💿 **Top Tracks for ${username}** (*${period}*):\n${formatted}`);
+    } catch (err) {
+      console.error("Last.fm error:", err);
+      msg.reply("❌ Failed to fetch data from Last.fm. Please try again later.");
+    }
+  },
 };
