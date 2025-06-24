@@ -14,7 +14,7 @@ This is a template I made if you wanna make a Last.FM bot yourself. It already h
 
 # Configuration
 
-since this is janky as fuck you need to put your last.fm api on every single commands it has `API_KEY` on it, replace that with your last.fm api
+replace `API_KEY` on `config.json` with your last.fm api key
 and then you'd have to put your bot token on `config.json`
 
 # Setup
